@@ -1,0 +1,14 @@
+<food>
+	<snack>
+		<chips id="1" supplier="store">
+ 			<price> $1.00</price>
+			<amount>1</amount>
+		</chips>
+	</snack>
+	<drink>
+		<lemonade id="2" supplier="Mom">
+			<price>$0.50</price>
+			<amount>2</amount>
+		</lemonade>
+	</drink>
+</food>
