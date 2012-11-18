@@ -2,9 +2,7 @@ import java.util.Scanner;
 
 import org.basex.core.BaseXException;
 
-
 public class index {
-
 	private static Scanner scanner;
 	private static DAO dao;
 
