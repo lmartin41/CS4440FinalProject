@@ -16,7 +16,7 @@ public class index {
 		dao.closeConnection();
 	}
 
-	private static void runQueries() {
+	public static void runQueries() {
 		System.out.println("\n\nPlease enter your query.  Press q to quit");
 		String query = scanner.nextLine();
 		if (query.equals("q")) return;

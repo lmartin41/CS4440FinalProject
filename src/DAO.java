@@ -1,6 +1,8 @@
 
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 import org.basex.BaseXServer;
 import org.basex.core.BaseXException;
 import org.basex.core.cmd.CreateDB;
@@ -14,7 +16,7 @@ public class DAO {
 	public final int PORT = 1984;
 	public final String USERNAME = "admin";
 	public final String PASSWORD = "admin";
-	public final String ACCESS_PATH = "./XMLfiles/";
+	public static final String ACCESS_PATH = "./XMLfiles/";
 	public ClientSession session;
 	public BaseXServer server; 
 
