@@ -4,7 +4,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -13,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -27,8 +27,10 @@ public class ProjectFrame extends JFrame {
 	private JTextField textField;
 	private JTextField textField_1;
 	private JTextField textField_2;
-	private DAO dao;
+	private static DAO dao;
 	private JTextField textField_3;
+	private static JTextArea textArea;
+	private static String outputStream;
 
 	/**
 	 * Launch the application.
@@ -37,6 +39,8 @@ public class ProjectFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					dao = new DAO();
+					dao.openConnection();
 					ProjectFrame frame = new ProjectFrame();
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -51,6 +55,7 @@ public class ProjectFrame extends JFrame {
 	 */
 	public ProjectFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width/2;
 		int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height/2;		
 		setBounds(screenWidth-400, screenHeight-300, 800, 600);
@@ -62,10 +67,32 @@ public class ProjectFrame extends JFrame {
 		menuBar.add(mnFile);
 
 		JMenuItem mntmNew = new JMenuItem("New");
+		mntmNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				
+			}
+		});
 		mnFile.add(mntmNew);
 
 		JMenuItem mntmOpen = new JMenuItem("Open");
+		mntmOpen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				String result = JOptionPane.showInputDialog(null, "Please enter the name for the database you would like to open");
+				dao.closeDB();
+				dao.openDB(result);
+			}
+		});
 		mnFile.add(mntmOpen);
+		
+		JMenuItem mntmSave = new JMenuItem("Save As");
+		mntmSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				String result = JOptionPane.showInputDialog(null, "Please enter the name for the database you would like to save");
+				dao.saveDB(result);
+			}
+		});
+		mnFile.add(mntmSave);
+		
 
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
@@ -139,21 +166,14 @@ public class ProjectFrame extends JFrame {
 		textField_2.setColumns(10);
 
 		JButton btnQuery = new JButton("Query");
-
 		btnQuery.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent event) {
 				String element = textField.getText();
 				String restrict = textField_1.getText();
 				String returnVal = textField_2.getText();
-
-				dao = new DAO();
-				dao.openConnection();
-
 				String query = giveMeQuery(element, restrict, returnVal);
-				dao.executeQuery(query);
-
-				dao.closeConnection();
+				String result = dao.executeQuery(query);
+				textArea.setText(result);
 			}
 		});
 
@@ -162,7 +182,8 @@ public class ProjectFrame extends JFrame {
 		JLabel lblOutput = new JLabel("Output:");
 		contentPane.add(lblOutput, "cell 1 5");
 
-		JTextArea textArea = new JTextArea();
+		textArea = new JTextArea();
+		textArea.setText(outputStream);
 		contentPane.add(textArea, "cell 1 6 7 2,grow");
 	}
 

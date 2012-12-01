@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
+import javax.swing.JOptionPane;
+
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
@@ -36,11 +38,14 @@ public class Convert {
 			while (scanner.hasNext()) {
 				String currentLine = scanner.nextLine();
 				Scanner lineScanner = new Scanner(currentLine);
-				String firstWord = lineScanner.next();
-				out.println("<" + firstWord + ">" + currentLine + "</" + firstWord + ">");
+				String firstWord = "";
+				if (lineScanner.hasNext()) firstWord = lineScanner.next();
+				String rest = currentLine.replace(firstWord, "");
+				out.println("<" + firstWord + ">" + rest + "</" + firstWord + ">");
 			}
 			out.println("</root>");
 			out.close();
+			JOptionPane.showMessageDialog(null, "File converted!");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 

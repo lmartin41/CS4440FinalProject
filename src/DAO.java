@@ -1,12 +1,13 @@
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import javax.swing.JOptionPane;
-
 import org.basex.BaseXServer;
-import org.basex.core.BaseXException;
+import org.basex.core.cmd.Close;
 import org.basex.core.cmd.CreateDB;
 import org.basex.core.cmd.DropDB;
+import org.basex.core.cmd.Open;
+import org.basex.core.cmd.XQuery;
 import org.basex.server.ClientSession;
 
 public class DAO {
@@ -18,13 +19,13 @@ public class DAO {
 	public final String PASSWORD = "admin";
 	public static final String ACCESS_PATH = "./XMLfiles/";
 	public ClientSession session;
-	public BaseXServer server; 
+	public BaseXServer server;
+	private ByteArrayOutputStream baos; 
 
 	public void openConnection() {
 		try {
 			server = new BaseXServer();
 			session = new ClientSession(SERVERNAME, PORT, USERNAME, PASSWORD);
-			session.setOutputStream(System.out);
 			createDB();
 		} catch (IOException e) {
 			System.err.println("Could not start the server");
@@ -34,8 +35,6 @@ public class DAO {
 
 	public void closeConnection() {
 		try {
-			System.out.println("\n");
-			dropDB();
 			session.close();
 			server.stop();
 		} catch (IOException e) {
@@ -50,7 +49,6 @@ public class DAO {
 	public void createDB() {
 		try {
 			session.execute(new CreateDB("Collection", ACCESS_PATH));
-			System.out.println();
 		} catch (IOException e) {
 			System.err.println("Unable to create DB");
 			e.printStackTrace();
@@ -65,14 +63,41 @@ public class DAO {
 			e.printStackTrace();
 		}
 	}
-
-	public void executeQuery(String query) {
+	
+	public void openDB(String name) {
 		try {
+			session.execute(new Open(name));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void closeDB() {
+		try {
+			session.execute(new Close());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveDB(String name) {
+		try {
+			session.execute(new CreateDB(name));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String executeQuery(String query) {
+		baos = new ByteArrayOutputStream();
+		try {
+			session.setOutputStream(baos);
 			session.query(query).execute();
 		} catch (IOException e) {
 			System.err.println("Error executing query");
 			e.printStackTrace();
 		}
+		return baos.toString();
 	}
 	
 }
